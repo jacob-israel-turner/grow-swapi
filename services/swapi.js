@@ -8,13 +8,13 @@ export default {
   getCharacters
 }
 
-const cachePassword = establishCache()
-cachePassword.then(() => console.log('cache established'))
+const cachePromise = establishCache()
+cachePromise.then(() => console.log('cache established'))
 
 async function getCharacters({limit, start, sort, asc}) {
   let up = asc ? 1 : -1
   let down = asc ? -1 : 1
-  await cachePassword
+  await cachePromise
   if (!characterSortFields.includes(sort)) throw new Error(`'${sort}' is not a valid sort field`)
   let sortedPeopleCache
   if (sort) sortedPeopleCache = peopleCache.sort(handleSort)
