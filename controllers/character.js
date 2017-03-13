@@ -3,7 +3,8 @@ import ejs from 'ejs'
 
 export default {
   get,
-  getOne
+  getOne,
+  getPlanetResidents,
 }
 
 async function get(req, res) {
@@ -20,7 +21,7 @@ async function get(req, res) {
   }
 }
 
-async function getOne(req, res, next) {
+async function getOne(req, res) {
   try {
     let {name} = req.params
     let {json} = req.query
@@ -28,6 +29,16 @@ async function getOne(req, res, next) {
     if (!character) return res.status(404).send(`Character '${name}' doesn't exist`)
     if (json) return res.json(character)
     res.render('character', character)
+  } catch (e) {
+    console.error(e)
+    res.status(500).send()
+  }
+}
+
+async function getPlanetResidents(req, res) {
+  try {
+    const planetResidents = await swapi.getPlanetResidents()
+    res.json(planetResidents)
   } catch (e) {
     console.error(e)
     res.status(500).send()

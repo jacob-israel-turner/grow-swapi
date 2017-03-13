@@ -2,12 +2,14 @@ import axios from 'axios'
 
 const baseUrl = 'http://swapi.co/api'
 let peopleCache = []
+let planetCache = []
 let peopleNameCache = {}
 let characterSortFields = ['', 'name', 'height', 'mass']
 
 export default {
   getCharacters,
-  getCharacterByName
+  getCharacterByName,
+  getPlanetResidents,
 }
 
 const cachePromise = establishCache()
@@ -62,9 +64,31 @@ async function getCharacterByName (name) {
   return peopleNameCache[name.toLowerCase()]
 }
 
+async function getPlanetResidents () {
+  await cachePromise
+  return planetCache.reduce((final, {name, residents}) => {
+    final[name] = residents
+    return final
+  }, {})
+}
+
 function establishCache() {
-  const peopleResultsPromise = axios.get(`${baseUrl}/people`)
-  return peopleResultsPromise
+  const getPeoplePromise = getPeopleCache()
+  const getPlanetsPromise = getPlanetsCache()
+  return Promise.all([getPeoplePromise, getPlanetsPromise])
+}
+
+function getPlanetsCache() {
+  return axios.get(`${baseUrl}/planets`)
+    .then(handleRes)
+  function handleRes({data}) {
+    planetCache = planetCache.concat(data.results)
+    if (data.next) return axios.get(data.next).then(handleRes)
+  }
+}
+
+function getPeopleCache() {
+  return axios.get(`${baseUrl}/people`)
     .then(handleRes)
   function handleRes({data}) {
     peopleCache = peopleCache.concat(data.results)

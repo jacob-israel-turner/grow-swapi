@@ -9,6 +9,7 @@ app.set('view engine', 'ejs')
 
 app.get('/characters', characterCtrl.get)
 app.get('/characters/:name', characterCtrl.getOne)
+app.get('/planetresidents', characterCtrl.getPlanetResidents)
 
 app.listen(port, e => {
   if (e) console.error(e)
