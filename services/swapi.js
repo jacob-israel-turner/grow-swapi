@@ -2,19 +2,28 @@ import axios from 'axios'
 
 const baseUrl = 'http://swapi.co/api'
 let peopleCache = []
+let peopleNameCache = {}
 let characterSortFields = ['', 'name', 'height', 'mass']
 
 export default {
-  getCharacters
+  getCharacters,
+  getCharacterByName
 }
 
 const cachePromise = establishCache()
-cachePromise.then(() => console.log('cache established'))
+cachePromise.then(() => {
+  peopleCache.forEach((person) => {
+    const first = person.name.split(' ')[0]
+    peopleNameCache[person.name.toLowerCase()] = person
+    if (first !== person.name && !peopleNameCache[first]) peopleNameCache[first.toLowerCase()] = person
+  })
+  console.log('cache established')
+})
 
 async function getCharacters({limit, start, sort, asc}) {
+  await cachePromise
   let up = asc ? 1 : -1
   let down = asc ? -1 : 1
-  await cachePromise
   if (!characterSortFields.includes(sort)) throw new Error(`'${sort}' is not a valid sort field`)
   let sortedPeopleCache
   if (sort) sortedPeopleCache = peopleCache.sort(handleSort)
@@ -46,6 +55,11 @@ async function getCharacters({limit, start, sort, asc}) {
     if (a.name > b.name) return up
     else return down
   }
+}
+
+async function getCharacterByName (name) {
+  await cachePromise
+  return peopleNameCache[name.toLowerCase()]
 }
 
 function establishCache() {

@@ -1,0 +1,40 @@
+<div>
+  <div>Name: <%=name%></div>
+  <div>Height: <%=height%></div>
+  <div>Mass: <%=mass%></div>
+  <div>Hair Color: <%=hair_color%></div>
+  <div>Skin Color: <%=skin_color%></div>
+  <div>Eye Color: <%=eye_color%></div>
+  <div>Birth Year: <%=birth_year%></div>
+  <div>Gender: <%=gender%></div>
+  <div><a href=<%=homeworld%> target="_blank">Homeworld</a></div>
+  <% if (films.length) { %>
+    <div><%=films.length%> Films: (
+      <% films.forEach((film, index) => { %>
+        <a href=<%=film%> target="_blank"><%=index + 1%></a>
+      <% }) %>
+    )</div>
+  <% } %>
+  <% if (species.length) { %>
+    <div><%=species.length%> Species: (
+      <% species.forEach((specie, index) => { %>
+        <a href=<%=specie%> target="_blank"><%=index + 1%></a>
+      <% }) %>
+    )</div>
+  <% } %>
+  <% if (vehicles.length) { %>
+    <div><%=vehicles.length%> Vehicles: (
+      <% vehicles.forEach((vehicle, index) => { %>
+        <a href=<%=vehicle%> target="_blank"><%=index + 1%></a>
+      <% }) %>
+    )</div>
+  <% } %>
+  <% if (starships.length) { %>
+    <div><%=starships.length%> Starships: (
+      <% starships.forEach((starship, index) => { %>
+        <a href=<%=starship%> target="_blank"><%=index + 1%></a>
+      <% }) %>
+    )</div>
+  <% } %>
+  <div><a href=<%=url%> target="_blank">Source</a></div>
+</div>
