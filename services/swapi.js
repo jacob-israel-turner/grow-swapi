@@ -13,15 +13,12 @@ export default {
   getPlanetResidents,
 }
 
+/* INIT */
+
 const cachePromise = establishCache()
-cachePromise.then(() => {
-  peopleCache.forEach((person) => {
-    const first = person.name.split(' ')[0]
-    peopleNameCache[person.name.toLowerCase()] = person
-    if (first !== person.name && !peopleNameCache[first]) peopleNameCache[first.toLowerCase()] = person
-  })
-  console.log('cache established')
-})
+cachePromise.then((runTime) => console.log(`Cache established in ${runTime / 1000}s`))
+
+/* PUBLIC METHODS */
 
 async function getCharacters({limit, start, sort, asc}) {
   await cachePromise
@@ -70,10 +67,14 @@ async function getPlanetResidents () {
   return planetResidentCache
 }
 
+/* PRIVATE METHODS */
+
 function establishCache() {
+  const startTime = new Date().getTime()
   const getPeoplePromise = getPeopleCache()
   const getPlanetsPromise = getPlanetsCache()
   return Promise.all([getPeoplePromise, getPlanetsPromise])
+    .then(() => new Date().getTime() - startTime)
 }
 
 function getPlanetsCache() {
@@ -98,8 +99,18 @@ function establishPlanetResidentCache () {
 function getPeopleCache() {
   return axios.get(`${baseUrl}/people`)
     .then(handleRes)
+    .then(establishPeopleNameCache)
+
   function handleRes({data}) {
     peopleCache = peopleCache.concat(data.results)
     if (data.next) return axios.get(data.next).then(handleRes)
   }
+}
+
+function establishPeopleNameCache() {
+  peopleCache.forEach((person) => {
+    const first = person.name.split(' ')[0]
+    peopleNameCache[person.name.toLowerCase()] = person
+    if (first !== person.name && !peopleNameCache[first]) peopleNameCache[first.toLowerCase()] = person
+  })
 }
